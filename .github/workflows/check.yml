@@ -1,0 +1,22 @@
+name: Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  merge_group:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: typst-community/setup-typst@v4
+      - uses: taiki-e/install-action@v2
+        with:
+          tool: just,tytanic,typstyle
+
+      - run: just fmt --check
+      - run: just test

@@ -3,8 +3,8 @@ list:
     @just --list
 
 # Format typst codes (requires typstyle)
-fmt:
-    typstyle src/ tests/ --inplace
+fmt *ARGS="--inplace":
+    typstyle src/ tests/ {{ ARGS }}
 
 # Run tests (requires tytanic)
 test:
