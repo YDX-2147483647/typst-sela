@@ -11,6 +11,16 @@
   ),
 )
 
+// When iterating the styles, there might be only a single value for `any`.
+#assert.eq(
+  sel(
+    heading.where(level: any(1)),
+  ),
+  selector.or(
+    heading.where(level: 1),
+  ),
+)
+
 #assert.eq(
   sel(
     heading.where(level: any(..range(1, 4))),
