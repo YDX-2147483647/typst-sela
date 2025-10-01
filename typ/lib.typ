@@ -4,7 +4,7 @@
   metadata(values.pos())
 }
 
-#let sel(target, debug: false) = {
+#let sel(target, debug: false, scope: (:)) = {
   assert.eq(type(target), selector)
   let expr = repr(target)
 
@@ -13,7 +13,8 @@
     .map(
       m => (
         any: m.text,
-        values: m.captures.first().split(", "),
+        // `trim` is necessary for single-element `any` calls.
+        values: m.captures.first().trim(",", at: end).split(", "),
       ),
     )
 
@@ -21,11 +22,18 @@
   let expanded = matches.fold(
     (expr,),
     (expanded, (any, values)) => values
-      .map(v => expanded.map(e => e.replace(any, v, count: 1)))
+      .map(
+        v => expanded.map(e => e.replace(any, v, count: 1)),
+      )
       .flatten(),
   )
 
-  if debug { expanded } else {
-    selector.or(..expanded.map(eval))
+  if debug {
+    expanded
+  } else {
+    selector.or(..expanded.map(
+      // `repr(table.cell.where(…))` is `cell.where(…)`,
+      eval.with(scope: (cell: table.cell) + scope),
+    ))
   }
 }
